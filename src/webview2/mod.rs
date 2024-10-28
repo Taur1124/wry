@@ -6,7 +6,8 @@ mod drag_drop;
 mod util;
 
 use std::{
-  borrow::Cow, cell::RefCell, collections::HashSet, fmt::Write, fs, path::PathBuf, rc::Rc, sync::mpsc
+  borrow::Cow, cell::RefCell, collections::HashSet, fmt::Write, fs, path::PathBuf, rc::Rc,
+  sync::mpsc,
 };
 
 use dpi::{PhysicalPosition, PhysicalSize};
@@ -502,7 +503,9 @@ impl InnerWebView {
     // Extension loading
     if pl_attrs.browser_extensions_enabled {
       if let Some(extension_path) = pl_attrs.extension_path {
-        unsafe { Self::load_extensions(&webview, &extension_path)?; }
+        unsafe {
+          Self::load_extensions(&webview, &extension_path)?;
+        }
       }
     }
 
@@ -1182,7 +1185,6 @@ impl InnerWebView {
     Ok(take_pwstr(pwstr))
   }
 
-  
   #[inline]
   unsafe fn load_extensions(webview: &ICoreWebView2, extension_path: &PathBuf) -> Result<()> {
     let profile = webview
