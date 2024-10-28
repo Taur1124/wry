@@ -242,6 +242,13 @@ impl InnerWebView {
       }
     }
 
+    // Extension loading
+    if let Some(extension_path) = pl_attrs.extension_path {
+      if let Some(extension_path) = extension_path.to_str() {
+        web_context.os.set_web_extensions_directory(extension_path);
+      }
+    }
+
     let webview = Self::create_webview(web_context, &attributes);
 
     // Transparent
@@ -271,13 +278,6 @@ impl InnerWebView {
     // Drag drop handler
     if let Some(drag_drop_handler) = attributes.drag_drop_handler.take() {
       drag_drop::connect_drag_event(&webview, drag_drop_handler);
-    }
-
-    // Extension loading
-    if let Some(extension_path) = pl_attrs.extension_path {
-      if let Some(extension_path) = extension_path.to_str() {
-        web_context.os.set_web_extensions_directory(extension_path);
-      }
     }
 
     web_context.register_automation(webview.clone());
