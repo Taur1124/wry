@@ -276,7 +276,7 @@ impl InnerWebView {
     // Extension loading
     if let Some(extension_path) = pl_attrs.extension_path {
       if let Some(extension_path) = extension_path.to_str() {
-        web_context.set_web_extensions_directory(extension_path);
+        web_context.os.context.set_web_extensions_directory(extension_path);
       }
     }
 
