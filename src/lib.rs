@@ -1402,6 +1402,18 @@ impl WebViewBuilderExtAndroid for WebViewBuilder<'_> {
   target_os = "netbsd",
   target_os = "openbsd",
 ))]
+#[derive(Default)]
+pub(crate) struct PlatformSpecificWebViewAttributes {
+  extension_path: Option<PathBuf>,
+}
+
+#[cfg(any(
+  target_os = "linux",
+  target_os = "dragonfly",
+  target_os = "freebsd",
+  target_os = "netbsd",
+  target_os = "openbsd",
+))]
 pub trait WebViewBuilderExtUnix<'a> {
   /// Consume the builder and create the webview inside a GTK container widget, such as GTK window.
   ///
