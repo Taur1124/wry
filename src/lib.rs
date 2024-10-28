@@ -1440,7 +1440,7 @@ impl<'a> WebViewBuilderExtUnix<'a> for WebViewBuilder<'a> {
   }
 
   fn with_extension_path(mut self, path: impl Into<PathBuf>) -> Self {
-    self.platform_specific.extension_path = Some(path.into());
+    self.inner.platform_specific.extension_path = Some(path.into());
     self
   }
 }
