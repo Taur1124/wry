@@ -1451,7 +1451,7 @@ impl<'a> WebViewBuilderExtUnix<'a> for WebViewBuilder<'a> {
       .map(|webview| WebView { webview })
   }
 
-  fn with_extension_path(mut self, path: impl Into<PathBuf>) -> Self {
+  fn with_extension_path(self, path: impl Into<PathBuf>) -> Self {
     self.and_then(|mut b| {
       b.platform_specific.extension_path = Some(path.into());
       Ok(b)
