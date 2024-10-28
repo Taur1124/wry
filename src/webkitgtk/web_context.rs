@@ -96,7 +96,7 @@ impl WebContextImpl {
   pub fn set_web_extensions_directory(&mut self, path: &Path) {
     self
       .context
-      .set_web_extensions_directory(path.to_string_lossy());
+      .set_web_extensions_directory(&path.to_string_lossy());
   }
 }
 
