@@ -244,9 +244,7 @@ impl InnerWebView {
 
     // Extension loading
     if let Some(extension_path) = pl_attrs.extension_path {
-      if let Some(extension_path) = extension_path.to_str() {
-        web_context.os.set_web_extensions_directory(extension_path);
-      }
+      web_context.os.set_web_extensions_directory(extension_path);
     }
 
     let webview = Self::create_webview(web_context, &attributes);

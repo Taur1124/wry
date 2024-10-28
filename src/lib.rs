@@ -1260,9 +1260,9 @@ pub trait WebViewBuilderExtWindows {
   /// see https://learn.microsoft.com/en-us/microsoft-edge/webview2/release-notes/archive?tabs=dotnetcsharp#10221055
   fn with_browser_extensions_enabled(self, enabled: bool) -> Self;
 
-  /// Determines the path from which to load extensions from. Extensions stored in this path should be unpacked.
+  /// Swt the path from which to load extensions from. Extensions stored in this path should be unpacked.
   /// 
-  /// Does nothing if browser extensions are disabled.
+  /// Does nothing if browser extensions are disabled. See [`with_browser_extensions_enabled`](Self::with_browser_extensions_enabled)
   fn with_extension_path(self, path: impl Into<PathBuf>) -> Self;
 }
 
@@ -1429,7 +1429,7 @@ pub trait WebViewBuilderExtUnix<'a> {
   where
     W: gtk::prelude::IsA<gtk::Container>;
 
-  /// Determines the path from which to load extensions from.
+  /// Set the path from which to load extensions from.
   fn with_extension_path(self, path: impl Into<PathBuf>) -> Self;
 }
 

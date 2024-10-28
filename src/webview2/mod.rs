@@ -500,11 +500,9 @@ impl InnerWebView {
     }
 
     // Extension loading
-    unsafe {
-      if pl_attrs.browser_extensions_enabled {
-        if let Some(extension_path) = pl_attrs.extension_path {
-          Self::load_extensions(&webview, &extension_path)?;
-        }
+    if pl_attrs.browser_extensions_enabled {
+      if let Some(extension_path) = pl_attrs.extension_path {
+        unsafe { Self::load_extensions(&webview, &extension_path)?; }
       }
     }
 
@@ -1192,18 +1190,12 @@ impl InnerWebView {
       .Profile()?
       .cast::<ICoreWebView2Profile7>()?;
 
-    if let Some(extension_path) = extension_path.to_str() {
-      // Iterate over all folders in the extension path
-      for entry in fs::read_dir(extension_path)? {
-        let path = entry?.path();
-        let path_str = path.to_str();
+    // Iterate over all folders in the extension path
+    for entry in fs::read_dir(extension_path)? {
+      let path = entry?.path();
+      let path_hs = HSTRING::from(path);
 
-        if let Some(path_str) = path_str {
-          let path_hs = HSTRING::from(path_str);
-
-          profile.AddBrowserExtension(&path_hs, None)?;
-        }
-      }
+      profile.AddBrowserExtension(&path_hs, None)?;
     }
 
     Ok(())

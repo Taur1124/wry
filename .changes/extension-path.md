@@ -2,4 +2,4 @@
 "wry": "patch"
 ---
 
-Add `with_extension_path` API to Windows and Linux.
+Add `WebViewBuilder::with_extension_path` API to Windows and Linux.
