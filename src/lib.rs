@@ -1186,6 +1186,7 @@ pub(crate) struct PlatformSpecificWebViewAttributes {
   use_https: bool,
   scroll_bar_style: ScrollBarStyle,
   browser_extensions_enabled: bool,
+  extension_path: Option<PathBuf>,
 }
 
 #[cfg(windows)]
@@ -1198,6 +1199,7 @@ impl Default for PlatformSpecificWebViewAttributes {
       use_https: false, // To match macOS & Linux behavior in the context of mixed content.
       scroll_bar_style: ScrollBarStyle::default(),
       browser_extensions_enabled: false,
+      extension_path: None,
     }
   }
 }
@@ -1257,6 +1259,11 @@ pub trait WebViewBuilderExtWindows {
   /// Requires WebView2 Runtime version 1.0.2210.55 or higher, does nothing on older versions,
   /// see https://learn.microsoft.com/en-us/microsoft-edge/webview2/release-notes/archive?tabs=dotnetcsharp#10221055
   fn with_browser_extensions_enabled(self, enabled: bool) -> Self;
+
+  /// Determines the path from which to load extensions from. Extensions stored in this path should be unpacked.
+  /// 
+  /// Does nothing if extensions are disabled, or the platform does not support them.
+  fn with_extension_path(self, path: impl Into<PathBuf>) -> Self;
 }
 
 #[cfg(windows)]
@@ -1299,6 +1306,13 @@ impl WebViewBuilderExtWindows for WebViewBuilder<'_> {
   fn with_browser_extensions_enabled(self, enabled: bool) -> Self {
     self.and_then(|mut b| {
       b.platform_specific.browser_extensions_enabled = enabled;
+      Ok(b)
+    })
+  }
+
+  fn with_extension_path(self, path: impl Into<PathBuf>) -> Self {
+    self.and_then(|mut b| {
+      b.platform_specific.extension_path = Some(path.into());
       Ok(b)
     })
   }
@@ -1402,6 +1416,9 @@ pub trait WebViewBuilderExtUnix<'a> {
   fn build_gtk<W>(self, widget: &'a W) -> Result<WebView>
   where
     W: gtk::prelude::IsA<gtk::Container>;
+
+  /// Determines the path from which to load extensions from.
+  fn with_extension_path(self, path: impl Into<PathBuf>) -> Self;
 }
 
 #[cfg(any(
@@ -1420,6 +1437,11 @@ impl<'a> WebViewBuilderExtUnix<'a> for WebViewBuilder<'a> {
 
     InnerWebView::new_gtk(widget, parts.attrs, parts.platform_specific)
       .map(|webview| WebView { webview })
+  }
+
+  fn with_extension_path(mut self, path: impl Into<PathBuf>) -> Self {
+    self.platform_specific.extension_path = Some(path.into());
+    self
   }
 }
 

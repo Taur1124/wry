@@ -209,7 +209,7 @@ impl InnerWebView {
   pub fn new_gtk<W>(
     container: &W,
     mut attributes: WebViewAttributes,
-    _pl_attrs: super::PlatformSpecificWebViewAttributes,
+    pl_attrs: super::PlatformSpecificWebViewAttributes,
   ) -> Result<Self>
   where
     W: IsA<gtk::Container>,
@@ -271,6 +271,13 @@ impl InnerWebView {
     // Drag drop handler
     if let Some(drag_drop_handler) = attributes.drag_drop_handler.take() {
       drag_drop::connect_drag_event(&webview, drag_drop_handler);
+    }
+
+    // Extension loading
+    if let Some(extension_path) = pl_attrs.extension_path {
+      if let Some(extension_path) = extension_path.to_str() {
+        web_context.set_web_extensions_directory(extension_path);
+      }
     }
 
     web_context.register_automation(webview.clone());

@@ -6,7 +6,7 @@ mod drag_drop;
 mod util;
 
 use std::{
-  borrow::Cow, cell::RefCell, collections::HashSet, fmt::Write, path::PathBuf, rc::Rc, sync::mpsc,
+  borrow::Cow, cell::RefCell, collections::HashSet, fmt::Write, fs, path::PathBuf, rc::Rc, sync::mpsc
 };
 
 use dpi::{PhysicalPosition, PhysicalSize};
@@ -496,6 +496,15 @@ impl InnerWebView {
 
       if attributes.focused {
         controller.MoveFocus(COREWEBVIEW2_MOVE_FOCUS_REASON_PROGRAMMATIC)?;
+      }
+    }
+
+    // Extension loading
+    unsafe {
+      if pl_attrs.browser_extensions_enabled {
+        if let Some(extension_path) = pl_attrs.extension_path {
+          Self::load_extensions(&webview, &extension_path)?;
+        }
       }
     }
 
@@ -1173,6 +1182,31 @@ impl InnerWebView {
     let mut pwstr = PWSTR::null();
     unsafe { webview.Source(&mut pwstr)? };
     Ok(take_pwstr(pwstr))
+  }
+
+  
+  #[inline]
+  unsafe fn load_extensions(webview: &ICoreWebView2, extension_path: &PathBuf) -> Result<()> {
+    let profile = webview
+      .cast::<ICoreWebView2_13>()?
+      .Profile()?
+      .cast::<ICoreWebView2Profile7>()?;
+
+    if let Some(extension_path) = extension_path.to_str() {
+      // Iterate over all folders in the extension path
+      for entry in fs::read_dir(extension_path)? {
+        let path = entry?.path();
+        let path_str = path.to_str();
+
+        if let Some(path_str) = path_str {
+          let path_hs = HSTRING::from(path_str);
+
+          profile.AddBrowserExtension(&path_hs, None)?;
+        }
+      }
+    }
+
+    Ok(())
   }
 }
 
