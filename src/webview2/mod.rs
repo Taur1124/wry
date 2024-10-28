@@ -1195,7 +1195,7 @@ impl InnerWebView {
     // Iterate over all folders in the extension path
     for entry in fs::read_dir(extension_path)? {
       let path = entry?.path();
-      let path_hs = HSTRING::from(path);
+      let path_hs = HSTRING::from(path.as_path());
 
       profile.AddBrowserExtension(&path_hs, None)?;
     }
