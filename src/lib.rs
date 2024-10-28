@@ -1262,7 +1262,7 @@ pub trait WebViewBuilderExtWindows {
 
   /// Determines the path from which to load extensions from. Extensions stored in this path should be unpacked.
   /// 
-  /// Does nothing if extensions are disabled, or the platform does not support them.
+  /// Does nothing if browser extensions are disabled.
   fn with_extension_path(self, path: impl Into<PathBuf>) -> Self;
 }
 
